@@ -6,6 +6,7 @@
       <div class="Chinese"></div>
       <!--拼音部分-->
       <div class="Pinyin">
+        <!--每一个音节-->
         <span class="pinyin-item"></span>
       </div>
     </div>
