@@ -104,7 +104,6 @@ const typingHandler = (el) => {
       PinYin: '',
       isErr: false
     })
-    HangSuccList.value.push(value)
   }
 
   // 删除按钮
