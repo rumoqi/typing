@@ -13,6 +13,13 @@ import('./assets/fontIcon/iconfont.css')
 
 const app = createApp(App)
 
+// 默认获取焦点
+app.directive('focus', {
+  mounted(el) {
+    el.focus()
+  }
+})
+
 app.use(createPinia())
 
 app.use(router)

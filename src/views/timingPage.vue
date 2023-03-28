@@ -1,5 +1,5 @@
 <template>
-  <div class="typing-box">
+  <div class="typing-box" @click="working">
     <!--单个词盒子-->
     <div class="text-box" v-for="(items, key) in textList" :key="key">
       <!--拼音部分-->
@@ -7,12 +7,13 @@
       <!--拼音部分-->
       <div class="Pinyin">
         <!--每一个音节-->
-        <p class="pinyin-item" v-for="(item, index) in items.pinYin" :key="index">
+        <span class="pinyin-item" v-for="(item, index) in items.pinYin" :key="index">
           {{ item }}
-        </p>
+        </span>
       </div>
     </div>
   </div>
+  <input class="input-text" type="text" ref="inputText" @keydown="typingHandler" v-focus />
 </template>
 
 <script setup>
@@ -23,6 +24,21 @@ import { onBeforeMount, ref } from 'vue'
 const phrase = usePhraseStore()
 // 渲染列表
 const textList = ref([])
+
+// 获取inputDOM
+const inputText = ref(null)
+
+// 获取焦点
+const working = () => inputText.value.focus()
+
+// 键盘敲击处理
+const typingHandler = (el) => {
+  // 获取当前打出的字
+  const key = el.key.toLowerCase()
+  // 当输入中文时处理
+  if (key === 'process') return alert('请使用英文输入法')
+  console.log(key)
+}
 
 // 获取列表数组
 const getPhrase = (num = 10) => {
@@ -47,7 +63,7 @@ onBeforeMount(() => {
 
 .text-box {
   width: auto;
-  font-size: 18px;
+  font-size: 20px;
   text-align: center;
   padding: 0 30px 20px 0;
 }
@@ -60,6 +76,7 @@ onBeforeMount(() => {
 .pinyin-item {
   width: 14px;
   opacity: 0.6;
+  font-weight: 500;
 }
 
 .success {
@@ -67,5 +84,9 @@ onBeforeMount(() => {
 }
 .err {
   color: red;
+}
+.input-text {
+  position: absolute;
+  left: -99999px;
 }
 </style>

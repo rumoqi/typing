@@ -44,7 +44,8 @@ section {
   box-sizing: border-box;
 }
 body {
-  font: 14px 'Microsoft YaHei', '华文楷体', Tahoma, Arial, sans-serif;
+  font: 14px 'Microsoft YaHei', Tahoma, Arial, sans-serif;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
   /*color: #555;*/
   /*background-color: #f7f7f7;*/
 }

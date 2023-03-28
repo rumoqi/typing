@@ -168,7 +168,7 @@ const ARR_PHRASE = [
   '浪漫'
 ]
 
-export const usePhraseStore = defineStore('XXX', () => {
+export const usePhraseStore = defineStore('phrase', () => {
   const phraseList = ref(ARR_PHRASE) // store的数据
   //  获取一段字符串
 
