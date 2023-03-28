@@ -7,12 +7,18 @@
       <!--拼音部分-->
       <div class="Pinyin">
         <!--每一个音节-->
-        <span class="pinyin-item" v-for="(item, index) in items.pinYin" :key="index">
+        <span
+          class="pinyin-item"
+          v-for="(item, index) in items.pinYin"
+          :class="fondClass(key, index, item)"
+          :key="index"
+        >
           {{ item }}
         </span>
       </div>
     </div>
   </div>
+  {{ nowPinyin }}
   <input class="input-text" type="text" ref="inputText" @keydown="typingHandler" v-focus />
 </template>
 
@@ -25,21 +31,6 @@ const phrase = usePhraseStore()
 // 渲染列表
 const textList = ref([])
 
-// 获取inputDOM
-const inputText = ref(null)
-
-// 获取焦点
-const working = () => inputText.value.focus()
-
-// 键盘敲击处理
-const typingHandler = (el) => {
-  // 获取当前打出的字
-  const key = el.key.toLowerCase()
-  // 当输入中文时处理
-  if (key === 'process') return alert('请使用英文输入法')
-  console.log(key)
-}
-
 // 获取列表数组
 const getPhrase = (num = 10) => {
   const list = getArrayItems(phrase.phraseList, num)
@@ -49,6 +40,47 @@ const getPhrase = (num = 10) => {
 onBeforeMount(() => {
   getPhrase()
 })
+
+// 获取inputDOM
+const inputText = ref(null)
+
+// 获取焦点
+const working = () => inputText.value.focus()
+
+// 当前的拼音位置
+let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: -1, PinYin: '' }])
+
+// 键盘敲击处理
+const typingHandler = (el) => {
+  // 获取当前打出的字
+  const key = el.key.toLowerCase()
+  // 当输入中文时处理
+  if (key === 'process') return alert('请使用英文输入法')
+  // 空格换行
+  if (key === ' ') {
+    const value = nowPinyin.value[nowPinyin.value.length - 1].itemIndex + 1
+    nowPinyin.value.push({
+      itemIndex: value,
+      pinyinIndex: -1,
+      PinYin: ''
+    })
+    // console.log(key, nowPinyin.value)
+  }
+}
+
+// 修改样式
+const fondClass = (key, index, item) => {
+  let returnClass = ''
+  nowPinyin.value.forEach((pin) => {
+    if (key === pin.itemIndex && index === pin.pinyinIndex && item !== pin.PinYin) {
+      returnClass = 'err'
+    }
+    if (key === pin.itemIndex && index === pin.pinyinIndex) {
+      returnClass = 'success'
+    }
+  })
+  return returnClass
+}
 </script>
 
 <style scoped>
