@@ -48,24 +48,46 @@ const inputText = ref(null)
 const working = () => inputText.value.focus()
 
 // 当前的拼音位置
+// itemIndex 当前词在那个位置     pinyinIndex 当前词的拼音的位置     PinYin 当前拼音打了什么字
 let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: -1, PinYin: '' }])
+
+// 输入的文字
+const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
 
 // 键盘敲击处理
 const typingHandler = (el) => {
   // 获取当前打出的字
   const key = el.key.toLowerCase()
+
   // 当输入中文时处理
   if (key === 'process') return alert('请使用英文输入法')
+
+  // 获取上一个对象的itemIndex
+  const value = nowPinyin.value[nowPinyin.value.length - 1].itemIndex
+  // 获取当前拼音位置
+  const INX = nowPinyin.value[nowPinyin.value.length - 1].pinyinIndex
+
   // 空格换行
   if (key === ' ') {
-    const value = nowPinyin.value[nowPinyin.value.length - 1].itemIndex + 1
     nowPinyin.value.push({
-      itemIndex: value,
+      itemIndex: value + 1,
       pinyinIndex: -1,
       PinYin: ''
     })
-    // console.log(key, nowPinyin.value)
   }
+
+  // 删除按钮
+  if (key === 'backspace' && INX !== -1) {
+    nowPinyin.value.pop()
+  }
+  // 输入26字母阶段
+  if (textSpace.indexOf(key) === -1) return
+
+  nowPinyin.value.push({
+    itemIndex: value,
+    pinyinIndex: INX + 1,
+    PinYin: key
+  })
 }
 
 // 修改样式
@@ -75,7 +97,7 @@ const fondClass = (key, index, item) => {
     if (key === pin.itemIndex && index === pin.pinyinIndex && item !== pin.PinYin) {
       returnClass = 'err'
     }
-    if (key === pin.itemIndex && index === pin.pinyinIndex) {
+    if (key === pin.itemIndex && index === pin.pinyinIndex && item === pin.PinYin) {
       returnClass = 'success'
     }
   })
