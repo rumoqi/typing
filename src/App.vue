@@ -2,6 +2,8 @@
   <div class="type" :style="theme">
     <!--面包屑-->
     <NavBar />
+
+    <!--路由出口-->
     <router-view />
 
     <!--遮罩层，修改主题-->

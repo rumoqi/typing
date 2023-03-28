@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "pinia": "^2.0.33",
+    "pinyin": "^3.0.0-alpha.5",
+    "pinyin-match": "^1.2.4",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },

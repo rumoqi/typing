@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getArrayItems } from '@/utils'
 const ARR_PHRASE = [
   '天空',
   '大海',
@@ -171,11 +170,7 @@ const ARR_PHRASE = [
 
 export const usePhraseStore = defineStore('XXX', () => {
   const phraseList = ref(ARR_PHRASE) // store的数据
-
   //  获取一段字符串
-  const getPhrase = (num = 10) => {
-    getArrayItems(num)
-  }
 
-  return { phraseList, getPhrase, usePhraseStore }
+  return { phraseList, usePhraseStore }
 })

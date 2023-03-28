@@ -1,3 +1,5 @@
+import pinyin from 'pinyin'
+
 export const getArrayItems = (arr, num = 10) => {
   let temp_arr = arr.slice(0)
   // 取出的数值项，保存在此数组
@@ -17,4 +19,14 @@ export const getArrayItems = (arr, num = 10) => {
     }
   }
   return return_arr
+}
+
+export const getPinyin = (textList) => {
+  let returnArr = []
+  textList.map((text) => {
+    const pinyins = pinyin(text, { style: pinyin.STYLE_NORMAL })
+    const pinYin = pinyins.map((item) => (Array.isArray(item) ? item[0] : item)).join('')
+    returnArr.push({ text, pinYin })
+  })
+  return returnArr
 }
