@@ -24,10 +24,9 @@
 import { inject, ref } from 'vue'
 // 顶部样式
 const navList = ref([
-  { name: '模式1(计时)', fontIcon: 'icon-daojishi', type: 0 },
-  { name: '模式2(限时)', fontIcon: 'icon-icon_xianshi-xian', type: 1 },
-  { name: '模式3(句子)', fontIcon: 'icon-liebiao', type: 2 },
-  { name: '按键声音', fontIcon: 'icon-shengyin', type: 3 }
+  { name: '模式1', fontIcon: 'icon-icon_xianshi-xian', type: 0 },
+  { name: '模式2', fontIcon: 'icon-liebiao', type: 1 },
+  { name: '按键声音', fontIcon: 'icon-shengyin', type: 2 }
 ])
 
 // 打开主题
