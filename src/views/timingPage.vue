@@ -91,10 +91,6 @@ let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }
 // 输入的文字
 const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
 
-let getHowPin = () => {
-  console.log(textList.value)
-}
-
 // 键盘敲击处理
 const typingHandler = (el) => {
   // 获取当前打出的字
@@ -109,9 +105,7 @@ const typingHandler = (el) => {
   const INX = nowPinyin.value[nowPinyin.value.length - 1].pinyinIndex
 
   // 空格换行
-  if (key === ' ') {
-    getHowPin(VALUE, INX)
-
+  if (key === ' ' && textList.value[VALUE].pinYin.length - 1 <= INX) {
     nowPinyin.value.push({
       itemIndex: VALUE + 1,
       pinyinIndex: -1,
