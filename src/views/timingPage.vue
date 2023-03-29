@@ -10,7 +10,13 @@
       <!--单个词盒子-->
       <div class="text-box" v-for="(items, key) in textList" :key="key">
         <!--拼音部分-->
-        <p class="Chinese" :class="[HangErrClassList[key] === key ? 'err' : null]">
+        <p
+          class="Chinese"
+          :class="[
+            HangErrClassList.indexOf(key) !== -1 ? 'err' : null,
+            HangSuccessClassList.indexOf(key) !== -1 ? 'success' : null
+          ]"
+        >
           {{ items.text }}
         </p>
         <!--拼音部分-->
@@ -85,6 +91,10 @@ let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }
 // 输入的文字
 const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
 
+let getHowPin = () => {
+  console.log(textList.value)
+}
+
 // 键盘敲击处理
 const typingHandler = (el) => {
   // 获取当前打出的字
@@ -94,34 +104,37 @@ const typingHandler = (el) => {
   if (key === 'process') return alert('请使用英文输入法')
 
   // 获取最后一个对象的itemIndex
-  const value = nowPinyin.value[nowPinyin.value.length - 1].itemIndex
+  const VALUE = nowPinyin.value[nowPinyin.value.length - 1].itemIndex
   // 获取最后一个拼音位置
   const INX = nowPinyin.value[nowPinyin.value.length - 1].pinyinIndex
 
   // 空格换行
   if (key === ' ') {
+    getHowPin(VALUE, INX)
+
     nowPinyin.value.push({
-      itemIndex: value + 1,
+      itemIndex: VALUE + 1,
       pinyinIndex: -1,
       PinYin: '',
       isErr: 'no'
     })
-    HangClass()
+    HangErrClass()
+    HangSuccessClass()
   }
 
   // 删除按钮
   if (key === 'backspace' && INX !== 999) {
     nowPinyin.value.pop()
-    HangClass()
+    HangErrClass()
   }
   // 输入26字母阶段
   if (textSpace.indexOf(key) === -1) return
 
   nowPinyin.value.push({
-    itemIndex: value,
+    itemIndex: VALUE,
     pinyinIndex: INX === 999 ? 0 : INX + 1,
     PinYin: key,
-    isErr: false
+    isErr: 'no'
   })
 }
 
@@ -129,9 +142,24 @@ const typingHandler = (el) => {
 
 // 汉字失败样式
 let HangErrClassList = ref([])
-const HangClass = () => {
-  let list = nowPinyin.value.map((item) => (item.isErr !== 'no' ? item.isErr : null))
+const HangErrClass = () => {
+  const list = nowPinyin.value.map((item) => (item.isErr !== 'no' ? item.isErr : null))
   HangErrClassList.value = [...new Set(list)].filter((item) => item !== null)
+}
+
+let HangSuccessClassList = ref([])
+const HangSuccessClass = () => {
+  let list = nowPinyin.value.map((item) => (item.isErr === 'no' ? item.itemIndex : null))
+  list = list.filter((value, index) => value !== list[index + 1])
+  list.forEach((item, index) => {
+    if (item === null) {
+      list.splice(index - 1, 2)
+    }
+  })
+
+  list.pop()
+
+  HangSuccessClassList.value = list
 }
 
 // 修改拼音样式
