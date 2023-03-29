@@ -7,6 +7,9 @@
       <span @click="changeNumHandler(40)">40</span>
     </div>
     <div class="typing-box" @click="working">
+      <!--      指引线     -->
+      <div class="line"></div>
+
       <!--单个词盒子-->
       <div class="text-box" v-for="(items, key) in textList" :key="key">
         <!--拼音部分-->
@@ -25,7 +28,13 @@
           <span
             class="pinyin-item"
             v-for="(item, index) in items.pinYin"
-            :class="fondClass(key, index, item)"
+            :class="[
+              fondClass(key, index, item),
+              PinyinAfter.itemIndex === key && PinyinAfter.pinyinIndex === index
+                ? 'line-after'
+                : null,
+              PinyinBefore === key ? 'line-before' : null
+            ]"
             :key="index"
           >
             {{ item }}
@@ -40,7 +49,14 @@
     </div>
 
     <!--输入-->
-    <input class="input-text" type="text" ref="inputText" @keydown="typingHandler" v-focus />
+    <input
+      class="input-text"
+      @blur="lostFocus"
+      type="text"
+      ref="inputText"
+      @keydown="typingHandler"
+      v-focus
+    />
   </div>
 </template>
 
@@ -69,7 +85,9 @@ onBeforeMount(() => {
 // 刷新按钮
 const flushedHandler = () => {
   getPhrase()
-  nowPinyin.value = [{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: false }]
+  nowPinyin.value = [{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }]
+  HangErrClassList.value = []
+  HangSuccessClassList.value = []
 }
 
 // 修改多少单词
@@ -80,18 +98,36 @@ const changeNumHandler = (num) => {
 
 // 获取inputDOM
 const inputText = ref(null)
-
 // 获取焦点
-const working = () => inputText.value.focus()
+const working = () => {
+  inputText.value.focus()
+  PinyinBefore.value = PinyinBeforeCopy.value ? PinyinBeforeCopy.value : 0
+}
+// 失去焦点
+const lostFocus = () => {
+  PinyinBeforeCopy.value = PinyinBefore.value
+  PinyinBefore.value = null
+}
 
-// 当前的拼音位置
+// 创建虚拟拼音树
 // itemIndex 当前词在那个位置     pinyinIndex 当前词的拼音的位置     PinYin 当前拼音打了什么字
 let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }])
 
-// 输入的文字
+//  指引线 --- 当前输入的拼音后显示
+let PinyinAfter = ref({}) // 输入位置
+let PinyinLocation = () => {
+  const length = nowPinyin.value.length - 1
+  const PinYin = [...nowPinyin.value]
+  PinyinAfter.value = PinYin[length]
+}
+// 指引线 --- 拼音第一行显示
+const PinyinBefore = ref(null) // 当前位置
+const PinyinBeforeCopy = ref(null)
+
+// 输入的文字 规定只能输入26字母
 const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
 
-// 键盘敲击处理
+// 键盘敲击处理  --------------------------------------------------------
 const typingHandler = (el) => {
   // 获取当前打出的字
   const key = el.key.toLowerCase()
@@ -105,13 +141,16 @@ const typingHandler = (el) => {
   const INX = nowPinyin.value[nowPinyin.value.length - 1].pinyinIndex
 
   // 空格换行
-  if (key === ' ' && textList.value[VALUE].pinYin.length - 1 <= INX) {
+  if (key === ' ' && textList.value[VALUE].pinYin.length - 1 <= INX && INX !== 999) {
     nowPinyin.value.push({
       itemIndex: VALUE + 1,
-      pinyinIndex: -1,
+      pinyinIndex: 999,
       PinYin: '',
       isErr: 'no'
     })
+    PinyinAfter.value = {}
+    PinyinBefore.value = VALUE + 1
+
     HangErrClass()
     HangSuccessClass()
   }
@@ -119,21 +158,28 @@ const typingHandler = (el) => {
   // 删除按钮
   if (key === 'backspace' && INX !== 999) {
     nowPinyin.value.pop()
-    HangErrClass()
+    HangErrClass() // 输入错误处理
+    HangSuccessClass() // 输入正确处理
+    PinyinLocation() // 右边线处理
   }
   // 输入26字母阶段
   if (textSpace.indexOf(key) === -1) return
 
+  // 当前文字打完后不回车就不能接着输入
+  if (textList.value[VALUE].pinYin.length - 1 <= INX && INX !== 999) return
+
+  // 添加一项打字位置
   nowPinyin.value.push({
     itemIndex: VALUE,
     pinyinIndex: INX === 999 ? 0 : INX + 1,
     PinYin: key,
     isErr: 'no'
   })
+  PinyinBefore.value = null
+  PinyinLocation()
 }
 
-// 汉字样式
-
+// 汉字样式 --------------------------------------------------------
 // 汉字失败样式
 let HangErrClassList = ref([])
 const HangErrClass = () => {
@@ -141,6 +187,7 @@ const HangErrClass = () => {
   HangErrClassList.value = [...new Set(list)].filter((item) => item !== null)
 }
 
+// 汉字成功样式
 let HangSuccessClassList = ref([])
 const HangSuccessClass = () => {
   let list = nowPinyin.value.map((item) => (item.isErr === 'no' ? item.itemIndex : null))
@@ -150,13 +197,11 @@ const HangSuccessClass = () => {
       list.splice(index - 1, 2)
     }
   })
-
   list.pop()
-
   HangSuccessClassList.value = list
 }
 
-// 修改拼音样式
+// 修改拼音样式 --------------------------------------------------------
 const fondClass = (key, index, item) => {
   let returnClass = ''
   nowPinyin.value.forEach((pin) => {
@@ -182,6 +227,7 @@ const fondClass = (key, index, item) => {
 }
 .more {
   font-size: 16px;
+  padding-left: 50px;
 }
 .more span {
   cursor: pointer;
@@ -193,6 +239,7 @@ const fondClass = (key, index, item) => {
   margin: 40px auto;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .text-box {
@@ -212,13 +259,13 @@ const fondClass = (key, index, item) => {
 .pinyin-item {
   width: 14px;
   opacity: 0.6;
-  color: #fff;
   transition: 0.5s;
 }
 
 .success {
   color: #1890ff;
 }
+
 .err {
   color: #f5222d;
 }
@@ -232,7 +279,42 @@ const fondClass = (key, index, item) => {
 
 .flushed i {
   cursor: pointer;
-  font-size: 50px;
+  font-size: 40px;
   opacity: 0.7;
+}
+.line-after::after {
+  content: '';
+  width: 3px;
+  height: 30px;
+  border-radius: 2px;
+  background-color: #1890ff;
+  position: absolute;
+  transform: translate(0, -5px);
+  transition: 1s;
+  animation: shrink-expand 1.5s linear infinite;
+}
+
+.pinyin-item:first-child.line-before::before {
+  content: '';
+  width: 3px;
+  height: 30px;
+  border-radius: 2px;
+  background-color: #1890ff;
+  position: absolute;
+  transform: translate(0, -5px);
+  transition: 1s;
+  animation: shrink-expand 1.5s linear infinite;
+}
+
+@keyframes shrink-expand {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>
