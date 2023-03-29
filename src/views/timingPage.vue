@@ -10,7 +10,9 @@
       <!--单个词盒子-->
       <div class="text-box" v-for="(items, key) in textList" :key="key">
         <!--拼音部分-->
-        <p class="Chinese">{{ items.text }}</p>
+        <p class="Chinese" :class="[HangErrClassList[key] === key ? 'err' : null]">
+          {{ items.text }}
+        </p>
         <!--拼音部分-->
         <div class="Pinyin">
           <!--每一个音节-->
@@ -78,7 +80,7 @@ const working = () => inputText.value.focus()
 
 // 当前的拼音位置
 // itemIndex 当前词在那个位置     pinyinIndex 当前词的拼音的位置     PinYin 当前拼音打了什么字
-let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: false }])
+let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }])
 
 // 输入的文字
 const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
@@ -102,13 +104,15 @@ const typingHandler = (el) => {
       itemIndex: value + 1,
       pinyinIndex: -1,
       PinYin: '',
-      isErr: false
+      isErr: 'no'
     })
+    HangClass()
   }
 
   // 删除按钮
   if (key === 'backspace' && INX !== 999) {
     nowPinyin.value.pop()
+    HangClass()
   }
   // 输入26字母阶段
   if (textSpace.indexOf(key) === -1) return
@@ -119,6 +123,15 @@ const typingHandler = (el) => {
     PinYin: key,
     isErr: false
   })
+}
+
+// 汉字样式
+
+// 汉字失败样式
+let HangErrClassList = ref([])
+const HangClass = () => {
+  let list = nowPinyin.value.map((item) => (item.isErr !== 'no' ? item.isErr : null))
+  HangErrClassList.value = [...new Set(list)].filter((item) => item !== null)
 }
 
 // 修改拼音样式
@@ -132,7 +145,7 @@ const fondClass = (key, index, item) => {
     }
     // 拼音设置正确样式
     if (key === pin.itemIndex && index === pin.pinyinIndex && item === pin.PinYin) {
-      pin.isErr = false
+      pin.isErr = 'no'
       returnClass = 'success'
     }
   })
@@ -162,8 +175,7 @@ const fondClass = (key, index, item) => {
 
 .text-box {
   width: auto;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 22px;
 
   text-align: center;
   padding: 0 30px 20px 0;
