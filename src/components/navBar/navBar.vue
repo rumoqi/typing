@@ -1,36 +1,39 @@
 <template>
   <!--模式-->
   <div class="nav-bar">
-    <span v-for="item in navList" :key="item.name">
+    <span v-for="item in navList" :key="item.name" @click="barClick(item.type)">
       <i class="iconfont" :class="item.fontIcon" />
       {{ item.name }}
-    </span>
-  </div>
-
-  <!--设置-->
-  <div class="nav-bar">
-    <span @click.stop="openTheme">
-      <i class="iconfont icon-moshi1" />
-      主题
-    </span>
-    <span>
-      <i class="iconfont icon-31shezhi" />
-      单词表
     </span>
   </div>
 </template>
 
 <script setup>
 import { inject, ref } from 'vue'
+import { useRouter } from 'vue-router'
 // 顶部样式
 const navList = ref([
   { name: '模式1', fontIcon: 'icon-icon_xianshi-xian', type: 0 },
   { name: '模式2', fontIcon: 'icon-liebiao', type: 1 },
-  { name: '按键声音', fontIcon: 'icon-shengyin', type: 2 }
+  { name: '主题', fontIcon: 'icon-moshi1', type: 2 },
+  { name: '单词表', fontIcon: 'icon-31shezhi', type: 3 }
 ])
 
 // 打开主题
 const theme = inject('ThemeHandler')
+const $router = useRouter()
+
+const barClick = (index) => {
+  if (index === 0) {
+    $router.push('/')
+  } else if (index === 1) {
+    $router.push('mode2')
+  } else if (index === 2) {
+    openTheme()
+  } else if (index === 3) {
+    console.log('单词表')
+  }
+}
 
 const openTheme = () => {
   theme.showThemePageHandler()

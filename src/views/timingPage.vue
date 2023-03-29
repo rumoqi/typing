@@ -66,23 +66,23 @@ import { getArrayItems, getPinyin } from '@/utils'
 import { onBeforeMount, ref } from 'vue'
 
 const phrase = usePhraseStore()
-// 渲染列表
+// 渲染列表 --------------------------------------------------------
 const textList = ref([])
 
-// 当前单词
+// 当前单词 --------------------------------------------------------
 const phraseNum = ref(10)
 
-// 获取列表数组
+// 获取列表数组 --------------------------------------------------------
 const getPhrase = (num = phraseNum.value) => {
   const list = getArrayItems(phrase.phraseList, num)
   textList.value = getPinyin(list)
 }
-// 默认在挂载dom之前添加一次
+// 默认在挂载dom之前添加一次 --------------------------------------------------------
 onBeforeMount(() => {
   getPhrase()
 })
 
-// 刷新按钮
+// 刷新按钮  --------------------------------------------------------
 const flushedHandler = () => {
   getPhrase()
   nowPinyin.value = [{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }]
@@ -90,13 +90,13 @@ const flushedHandler = () => {
   HangSuccessClassList.value = []
 }
 
-// 修改多少单词
+// 修改多少单词 --------------------------------------------------------
 const changeNumHandler = (num) => {
   phraseNum.value = num
   getPhrase()
 }
 
-// 获取inputDOM
+// 获取inputDOM --------------------------------------------------------
 const inputText = ref(null)
 // 获取焦点
 const working = () => {
@@ -113,6 +113,7 @@ const lostFocus = () => {
 // itemIndex 当前词在那个位置     pinyinIndex 当前词的拼音的位置     PinYin 当前拼音打了什么字
 let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }])
 
+// 指引线 --------------------------------------------------------
 //  指引线 --- 当前输入的拼音后显示
 let PinyinAfter = ref({}) // 输入位置
 let PinyinLocation = () => {
