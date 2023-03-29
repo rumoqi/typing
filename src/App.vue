@@ -22,23 +22,41 @@ import ThemePage from '@/components/themePage/themePage.vue'
 // 获取 pinia 数据
 const themes = useThemesStore()
 
-// 设置默认主题
+// 设置默认主题 ------------------------------
 let theme = ref(themes.defaultTheme)
 // 修改主题
 const changeThemeHandler = (style) => {
   theme.value = style
+  changeColor(DOM.value)
 }
-
 //  主题
 let isShowThemePage = ref(false)
 // 打开修改主题盒子
 const showThemePageHandler = () => {
   isShowThemePage.value = !isShowThemePage.value
 }
-// 导出方法
+// 该DOM为sentence-page的下划线
+let DOM = ref('')
+// 该方法专门处理sentence-page的无法修改样式bug
+const changeColor = (Dom) => {
+  DOM.value = Dom
+  Dom.value.style.color = theme.value.color
+  Dom.value.style.borderColor = theme.value.color
+}
+
+// 添加词语 --------------------------
+const isShowTextPage = ref(true)
+const isShowTextPageHandler = () => {
+  isShowTextPage.value = !isShowTextPage.value
+}
+
+// 导出方法--------------------------
 provide('ThemeHandler', {
   showThemePageHandler,
-  changeThemeHandler
+  changeThemeHandler,
+  theme: theme.value,
+  changeColor,
+  isShowTextPageHandler
 })
 </script>
 

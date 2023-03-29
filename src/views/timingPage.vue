@@ -281,13 +281,6 @@ const fondClass = (key, index, item) => {
   transition: 0.5s;
 }
 
-.success {
-  color: #1890ff;
-}
-
-.err {
-  color: #f5222d;
-}
 .input-text {
   position: absolute;
   left: -99999px;
@@ -301,6 +294,7 @@ const fondClass = (key, index, item) => {
   font-size: 40px;
   opacity: 0.7;
 }
+
 .line-after::after {
   content: '';
   width: 3px;

@@ -170,7 +170,10 @@ const ARR_PHRASE = [
 
 export const usePhraseStore = defineStore('phrase', () => {
   const phraseList = ref(ARR_PHRASE) // store的数据
-  //  获取一段字符串
+  //  设置表
+  const setList = (list) => {
+    phraseList.value = list
+  }
 
-  return { phraseList, usePhraseStore }
+  return { setList, phraseList, usePhraseStore }
 })

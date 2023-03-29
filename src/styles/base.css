@@ -1,6 +1,12 @@
 /* css reset:为什么? 为了重置默认样式, 并让各大浏览器的样式统一 */
 /* 初始化 */
+.success {
+  color: #1890ff;
+}
 
+.err {
+  color: #f5222d;
+}
 body,
 div,
 ul,

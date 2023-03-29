@@ -1,7 +1,12 @@
 <template>
   <!--模式-->
   <div class="nav-bar">
-    <span v-for="item in navList" :key="item.name" @click="barClick(item.type)">
+    <span
+      v-for="item in navList"
+      :key="item.name"
+      @click="barClick(item.type)"
+      v-show="item.type !== 3 || isShowRoute"
+    >
       <i class="iconfont" :class="item.fontIcon" />
       {{ item.name }}
     </span>
@@ -15,23 +20,26 @@ import { useRouter } from 'vue-router'
 const navList = ref([
   { name: '模式1', fontIcon: 'icon-icon_xianshi-xian', type: 0 },
   { name: '模式2', fontIcon: 'icon-liebiao', type: 1 },
-  { name: '主题', fontIcon: 'icon-moshi1', type: 2 },
-  { name: '单词表', fontIcon: 'icon-31shezhi', type: 3 }
+  { name: '主题', fontIcon: 'icon-moshi1', type: 2 }
 ])
 
 // 打开主题
 const theme = inject('ThemeHandler')
 const $router = useRouter()
+let isShowRoute = ref(true)
 
 const barClick = (index) => {
+  // 模式1
   if (index === 0) {
     $router.push('/')
+    isShowRoute.value = true
   } else if (index === 1) {
+    // 模式2
     $router.push('mode2')
+    isShowRoute.value = false
   } else if (index === 2) {
+    // 主题
     openTheme()
-  } else if (index === 3) {
-    console.log('单词表')
   }
 }
 

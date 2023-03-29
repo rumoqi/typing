@@ -63,6 +63,7 @@ const exitHandler = () => {
   display: flex;
   justify-content: end;
   font-size: 16px;
+  cursor: pointer;
 }
 .box {
   display: flex;
