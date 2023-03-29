@@ -88,6 +88,9 @@ const flushedHandler = () => {
   nowPinyin.value = [{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }]
   HangErrClassList.value = []
   HangSuccessClassList.value = []
+  PinyinAfter.value = PinyinAfterCopy.value = {}
+  PinyinBefore.value = PinyinBeforeCopy.value = 0
+  working()
 }
 
 // 修改多少单词 --------------------------------------------------------
@@ -101,10 +104,19 @@ const inputText = ref(null)
 // 获取焦点
 const working = () => {
   inputText.value.focus()
-  PinyinBefore.value = PinyinBeforeCopy.value ? PinyinBeforeCopy.value : 0
+  PinyinAfter.value = PinyinAfterCopy.value || {}
+  if (PinyinAfter.value === {}) return
+  if (PinyinBefore.value === 0) {
+    PinyinBefore.value = 0
+  } else {
+    PinyinBefore.value = PinyinBeforeCopy.value
+  }
 }
 // 失去焦点
 const lostFocus = () => {
+  PinyinAfterCopy.value = PinyinAfter.value
+  PinyinAfter.value = {}
+
   PinyinBeforeCopy.value = PinyinBefore.value
   PinyinBefore.value = null
 }
@@ -116,14 +128,16 @@ let nowPinyin = ref([{ itemIndex: 0, pinyinIndex: 999, PinYin: '', isErr: 'no' }
 // 指引线 --------------------------------------------------------
 //  指引线 --- 当前输入的拼音后显示
 let PinyinAfter = ref({}) // 输入位置
+let PinyinAfterCopy = ref({}) // 输入位置
+
 let PinyinLocation = () => {
   const length = nowPinyin.value.length - 1
   const PinYin = [...nowPinyin.value]
   PinyinAfter.value = PinYin[length]
 }
 // 指引线 --- 拼音第一行显示
-const PinyinBefore = ref(null) // 当前位置
-const PinyinBeforeCopy = ref(null)
+const PinyinBefore = ref(0) // 当前位置
+const PinyinBeforeCopy = ref(0)
 
 // 输入的文字 规定只能输入26字母
 const textSpace = 'qwertyuiopasdfghjklzxcvbnm'
@@ -162,6 +176,10 @@ const typingHandler = (el) => {
     HangErrClass() // 输入错误处理
     HangSuccessClass() // 输入正确处理
     PinyinLocation() // 右边线处理
+
+    if (INX === 0) {
+      PinyinBefore.value = PinyinBeforeCopy.value = VALUE
+    }
   }
   // 输入26字母阶段
   if (textSpace.indexOf(key) === -1) return
