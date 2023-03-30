@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
-const timingPage = () => import('../views/timingPage.vue')
-const sentencePage = () => import('../views/sentencePage.vue')
+import { createRouter, createWebHashHistory } from "vue-router";
+const timingPage = () => import('@/views/timingPage.vue')
+const sentencePage = () => import('@/views/sentencePage.vue')
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',

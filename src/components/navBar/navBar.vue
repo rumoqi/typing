@@ -7,7 +7,7 @@
       @click="barClick(item.type)"
       v-show="item.type !== 3 || isShowRoute"
     >
-      <i class="iconfont" :class="item.fontIcon" />
+      <i class="iconfont icon-box" :class="item.fontIcon" />
       {{ item.name }}
     </span>
   </div>
@@ -35,7 +35,7 @@ const barClick = (index) => {
     isShowRoute.value = true
   } else if (index === 1) {
     // 模式2
-    $router.push('mode2')
+    $router.push('/mode2')
     isShowRoute.value = false
   } else if (index === 2) {
     // 主题
@@ -53,6 +53,10 @@ const openTheme = () => {
   display: flex;
   flex-wrap: wrap;
   font-size: 16px;
+}
+.icon-box {
+  width: 16px ;
+  height: 16px;
 }
 
 .nav-bar:first-child {
